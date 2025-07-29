@@ -34,6 +34,17 @@ export async function printNotes() {
 
   console.log(chalk.bgBlue("Here is the list of notes: "));
   notes.forEach((note) => {
-    console.log(chalk.blue(note.title));
+    console.log(chalk.blue(note.id, note.title));
   });
+}
+
+export async function remove(id) {
+  const notes = await getNotes();
+  const filtered = notes.filter((note) => note.id !== id);
+
+  if (notes.length === filtered.length) {
+    return;
+  }
+  await fs.writeFile(notesPath, JSON.stringify(filtered, null, 2));
+  console.log(chalk.red.inverse(`Note with id ${id} was removed.`));
 }

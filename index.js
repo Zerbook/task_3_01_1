@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { addNote, printNotes } from "./notes.controller.mjs";
+import { addNote, printNotes, remove } from "./notes.controller.mjs";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import path from "path";
@@ -27,6 +27,20 @@ yargs(hideBin(process.argv))
     },
     handler({ title }) {
       addNote(title);
+    },
+  })
+  .command({
+    command: "remove",
+    describe: "Remove note by id",
+    builder: {
+      id: {
+        type: "string",
+        describe: "Note id",
+        demandOption: true,
+      },
+    },
+    handler({ id }) {
+      remove(id);
     },
   })
   .command({
