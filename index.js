@@ -1,31 +1,39 @@
-const yargs = require("yargs");
-const pkg = require("./package.json");
-const { addNote, getNotes } = require("./notes.controller");
+import { readFile } from "fs/promises";
+import { addNote, printNotes } from "./notes.controller.mjs";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+import path from "path";
+import { fileURLToPath } from "url";
 
-yargs.version(pkg.version);
+// Получаем __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-yargs.command({
-  command: "add",
-  describe: "Add new note to list",
-  builder: {
-    title: {
-      type: "string",
-      describe: "Note title",
-      demandOption: true,
+// Читаем package.json вручную
+const pkgRaw = await readFile(path.join(__dirname, "package.json"), "utf-8");
+const pkg = JSON.parse(pkgRaw);
+
+yargs(hideBin(process.argv))
+  .version(pkg.version)
+  .command({
+    command: "add",
+    describe: "Add new note to list",
+    builder: {
+      title: {
+        type: "string",
+        describe: "Note title",
+        demandOption: true,
+      },
     },
-  },
-  handler({ title }) {
-    addNote(title);
-  },
-});
-
-yargs.command({
-  command: "list",
-  describe: "Print all notes",
-  async handler() {
-    const notes = await getNotes();
-    console.log(notes);
-  },
-});
-
-yargs.parse();
+    handler({ title }) {
+      addNote(title);
+    },
+  })
+  .command({
+    command: "list",
+    describe: "Print all notes",
+    async handler() {
+      printNotes();
+    },
+  })
+  .parse();

@@ -4,4 +4,6 @@ npm i yargs
 
 npm i @types/yargs
 
+npm i chalk
+
 урок 5    5:06
